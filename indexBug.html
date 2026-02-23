@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variations &amp; Courbes — Première</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="deco-bar"></div>
+
+<!-- ══════════ HERO ══════════ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-ornament">Première &nbsp;·&nbsp; Mathématiques &nbsp;·&nbsp; Analyse</div>
+      <h1>Variations &amp;<br><span>Courbes</span></h1>
+      <p class="hero-sub">Signe de la dérivée, extremums, optimisation, inégalités, position relative et méthode de Newton.</p>
+      <nav class="nav-pills">
+        <a href="#signe-deriv">01 Signe &amp; variations</a>
+        <a href="#extremums">02 Extremums</a>
+        <a href="#optim">03 Optimisation</a>
+        <a href="#inegalites">04 Inégalités</a>
+        <a href="#position">05 Position relative</a>
+        <a href="#trinome">06 Trinôme et dérivée</a>
+        <a href="#newton">07 Méthode de Newton</a>
+        <a href="#qcm">08 QCM</a>
+        <a href="#contact">09 Contact</a>
+      </nav>
+    </div>
+    <div class="hero-geo">
+      <!-- Art deco geometric SVG -->
+      <svg viewBox="0 0 180 240" fill="none">
+        <polygon points="90,10 170,55 170,185 90,230 10,185 10,55" stroke="#d4a843" stroke-width="1" fill="rgba(212,168,67,.04)"/>
+        <polygon points="90,30 150,65 150,175 90,210 30,175 30,65" stroke="#d4a843" stroke-width=".5" fill="none"/>
+        <line x1="90" y1="10" x2="90" y2="230" stroke="rgba(212,168,67,.25)" stroke-width=".5"/>
+        <line x1="10" y1="120" x2="170" y2="120" stroke="rgba(212,168,67,.25)" stroke-width=".5"/>
+        <!-- axes & curve hint -->
+        <polyline points="30,185 90,120 150,60" stroke="#2dd4bf" stroke-width="1.5" fill="none" opacity=".6"/>
+        <polyline points="30,60 60,180 90,130 120,160 150,80" stroke="#d4a843" stroke-width="1.2" fill="none" opacity=".5"/>
+        <!-- tangent hint -->
+        <line x1="50" y1="195" x2="130" y2="160" stroke="#f472b6" stroke-width="1" opacity=".6" stroke-dasharray="4,3"/>
+        <circle cx="90" cy="120" r="4" fill="#d4a843" opacity=".8"/>
+        <!-- corner ornaments -->
+        <rect x="8" y="8" width="8" height="8" fill="none" stroke="#d4a843" stroke-width=".8"/>
+        <rect x="164" y="8" width="8" height="8" fill="none" stroke="#d4a843" stroke-width=".8"/>
+        <rect x="8" y="224" width="8" height="8" fill="none" stroke="#d4a843" stroke-width=".8"/>
+        <rect x="164" y="224" width="8" height="8" fill="none" stroke="#d4a843" stroke-width=".8"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 01 — SIGNE & VARIATIONS ══════════ -->
+<div class="section fi" id="signe-deriv">
+  <span class="sec-tag">01 — Lien dérivée / variations</span>
+  <h2>Signe de \(f'\) et sens de variation</h2>
+
+  <p>Si \(f\) est dérivable sur un intervalle \(I\), le signe de \(f'\) détermine entièrement les variations de \(f\) sur \(I\) :</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0">
+    <div class="card" data-lbl="f' > 0">
+      <div class="fm teal">\[f'(x) > 0 \;\Rightarrow\; f \nearrow\]</div>
+      <p style="margin:0;font-size:.9rem">\(f\) est <strong style="color:var(--teal)">strictement croissante</strong> sur \(I\).</p>
+    </div>
+    <div class="card rose" data-lbl="f' < 0">
+      <div class="fm rose">\[f'(x) < 0 \;\Rightarrow\; f \searrow\]</div>
+      <p style="margin:0;font-size:.9rem">\(f\) est <strong style="color:var(--rose)">strictement décroissante</strong> sur \(I\).</p>
+    </div>
+    <div class="card teal" data-lbl="f' = 0">
+      <div class="fm">\[f'(x) = 0 \;\forall x \;\Rightarrow\; f = \text{cte}\]</div>
+      <p style="margin:0;font-size:.9rem">\(f\) est <strong>constante</strong> sur \(I\).</p>
+    </div>
+  </div>
+
+  <h3>Méthode — Tableau de variations</h3>
+  <p>Pour étudier les variations de \(f\) : <strong>①</strong> calculer \(f'\), <strong>②</strong> résoudre \(f'(x)=0\), <strong>③</strong> étudier le signe de \(f'\), <strong>④</strong> dresser le tableau de variations.</p>
+
+  <h3>Outil interactif — Signe de f' et tableau de variations</h3>
+  <div class="ctrls">
+    <div class="cg"><label>Fonction :</label>
+      <select id="fn-var" onchange="drawVar()" style="font-family:var(--mono);font-size:.75rem;padding:5px 10px;border:1px solid var(--line);background:var(--bg2);color:var(--ivory);cursor:pointer;">
+        <option value="x2m3">x²−3x+2</option>
+        <option value="cubic">x³−3x</option>
+        <option value="quart">x⁴−4x²</option>
+        <option value="custom">−2x²+4x+1</option>
+        <option value="cubeup">x³−6x²+9x</option>
+      </select>
+    </div>
+  </div>
+  <div class="cvs-wrap"><canvas id="c-var" width="660" height="380"></canvas></div>
+  <div id="var-table"></div>
+</div>
+
+<!-- ══════════ 02 — EXTREMUMS ══════════ -->
+<div class="section fi" id="extremums">
+  <span class="sec-tag">02 — Extremums locaux</span>
+  <h2>Nombre dérivé nul en un <em>extremum</em></h2>
+
+  <div class="card" data-lbl="Théorème">
+    <p>Si \(f\) admet un extremum local en \(a\) et si \(f\) est dérivable en \(a\), alors :</p>
+    <div class="fm">\[f'(a) = 0\]</div>
+    <p style="margin:0">La tangente en ce point est <strong>horizontale</strong>. La réciproque est fausse : \(f'(a)=0\) n'implique pas toujours un extremum (ex. : \(f(x)=x^3\) en \(a=0\)).</p>
+  </div>
+
+  <h3>Critère de signe pour les extremums</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0">
+    <div class="card teal" data-lbl="Minimum local">
+      <p style="margin-bottom:6px;font-size:.9rem">\(f'\) change de signe <strong>−&nbsp;→&nbsp;+</strong> en \(a\)</p>
+      <div class="fm teal">\[f(a) = \min\text{ local}\]</div>
+    </div>
+    <div class="card rose" data-lbl="Maximum local">
+      <p style="margin-bottom:6px;font-size:.9rem">\(f'\) change de signe <strong>+&nbsp;→&nbsp;−</strong> en \(a\)</p>
+      <div class="fm rose">\[f(a) = \max\text{ local}\]</div>
+    </div>
+  </div>
+
+  <h3>Outil — Trouver et afficher les extremums</h3>
+  <div class="ctrls">
+    <div class="cg"><label>a =</label><input type="range" id="ex-a" min="-4" max="-0.1" value="-3" step=".1"><span class="val" id="ex-a-v">−3</span></div>
+    <div class="cg"><label>b =</label><input type="range" id="ex-b" min="0.1" max="4" value="1" step=".1"><span class="val" id="ex-b-v">1</span></div>
+    <div class="cg"><label>c =</label><input type="range" id="ex-c" min="-8" max="8" value="2" step=".5"><span class="val" id="ex-c-v">2</span></div>
+  </div>
+  <p style="font-size:.88rem;color:var(--muted);font-style:italic">f(x) = (x−a)(x−b)(x−c) — forme factorisée à trois racines</p>
+  <div class="cvs-wrap"><canvas id="c-ext" width="660" height="360"></canvas></div>
+  <div id="ext-res"></div>
+</div>
+
+<!-- ══════════ 03 — OPTIMISATION ══════════ -->
+<div class="section fi" id="optim">
+  <span class="sec-tag">03 — Problèmes d'optimisation</span>
+  <h2>Maximiser et minimiser</h2>
+
+  <p>Un problème d'optimisation consiste à trouver la valeur d'une variable qui maximise ou minimise une quantité. La dérivée est l'outil principal : le maximum ou minimum est atteint là où \(f'=0\) (et change de signe).</p>
+
+  <div class="card" data-lbl="Méthode">
+    <p><strong>①</strong> Exprimer la quantité à optimiser en fonction d'une seule variable.</p>
+    <p><strong>②</strong> Déterminer le domaine de validité (contraintes).</p>
+    <p><strong>③</strong> Dériver, résoudre \(f'=0\), vérifier le changement de signe.</p>
+    <p style="margin:0"><strong>④</strong> Conclure : valeur optimale et optimum.</p>
+  </div>
+
+  <h3>Exemple guidé — Enclos rectangulaire</h3>
+  <div class="card teal" data-lbl="Énoncé">
+    <p>On dispose de \(L\) mètres de grillage pour clôturer un enclos rectangulaire adossé à un mur (un côté libre). Quelle valeur de \(x\) (largeur) maximise l'aire ?</p>
+    <div class="fm teal">\[A(x) = x\left(\frac{L-2x}{1}\right) = x(L-2x) = Lx - 2x^2\]</div>
+    <div class="fm">\[A'(x) = L - 4x \quad\Rightarrow\quad A'(x)=0 \iff x = \frac{L}{4}\]</div>
+    <p style="margin:0">\(A'\) change de + à − en \(x=L/4\) : c'est un <strong>maximum</strong>. Aire maximale : \(A(L/4)=L^2/8\).</p>
+  </div>
+
+  <h3>Outil — Optimisation de l'enclos</h3>
+  <div class="ctrls">
+    <div class="cg"><label>L (périmètre disponible) =</label>
+      <input type="range" id="opt-L" min="10" max="100" value="40" step="2">
+      <span class="val" id="opt-L-v">40</span><span style="font-family:var(--mono);font-size:.72rem;color:var(--muted)"> m</span>
+    </div>
+    <div class="cg"><label>x (largeur) =</label>
+      <input type="range" id="opt-x" min="1" max="49" value="10" step=".5">
+      <span class="val" id="opt-x-v">10</span><span style="font-family:var(--mono);font-size:.72rem;color:var(--muted)"> m</span>
+    </div>
+  </div>
+  <div class="cvs-wrap"><canvas id="c-opt" width="660" height="300"></canvas></div>
+  <div id="opt-res"></div>
+</div>
+
+<!-- ══════════ 04 — INÉGALITÉS ══════════ -->
+<div class="section fi" id="inegalites">
+  <span class="sec-tag">04 — Inégalités par les variations</span>
+  <h2>Exploiter les variations</h2>
+
+  <div class="card" data-lbl="Principe">
+    <p>Si \(f\) est croissante sur \([a;b]\) et \(x \in [a;b]\), alors \(f(a) \leq f(x) \leq f(b)\).</p>
+    <p style="margin:0">On peut ainsi <strong>encadrer</strong> des valeurs ou <strong>démontrer des inégalités</strong> à partir du tableau de variations d'une fonction auxiliaire \(h = f - g\).</p>
+  </div>
+
+  <h3>Méthode — Position relative de deux courbes</h3>
+  <div class="card teal" data-lbl="Technique">
+    <p><strong>Étudier \(h = f - g\)</strong> :</p>
+    <p>· Si \(h(x) > 0\) sur \(I\) → courbe de \(f\) <strong>au-dessus</strong> de celle de \(g\) sur \(I\)</p>
+    <p style="margin:0">· Si \(h(x) = 0\) → les courbes <strong>se croisent</strong> (ou se touchent) en ce point</p>
+  </div>
+
+  <h3>Outil — Comparer \(f\) et \(g\)</h3>
+  <div class="ctrls">
+    <div class="cg"><label>f(x) :</label>
+      <select id="cmp-f" onchange="drawCmp()" style="font-family:var(--mono);font-size:.73rem;padding:5px 10px;border:1px solid var(--line);background:var(--bg2);color:var(--ivory);">
+        <option value="x3">x³</option>
+        <option value="x2p1">x²+1</option>
+        <option value="xsq">√x</option>
+      </select>
+    </div>
+    <div class="cg"><label>g(x) :</label>
+      <select id="cmp-g" onchange="drawCmp()" style="font-family:var(--mono);font-size:.73rem;padding:5px 10px;border:1px solid var(--line);background:var(--bg2);color:var(--ivory);">
+        <option value="x2">x²</option>
+        <option value="x">x</option>
+        <option value="x2p1">x²+1</option>
+      </select>
+    </div>
+  </div>
+  <div class="cvs-wrap"><canvas id="c-cmp" width="660" height="340"></canvas></div>
+  <div id="cmp-res"></div>
+</div>
+
+<!-- ══════════ 05 — POSITION RELATIVE ══════════ -->
+<div class="section fi" id="position">
+  <span class="sec-tag">05 — Position relative de deux courbes</span>
+  <h2>f(x) vs g(x) — étude complète</h2>
+
+  <p>Pour étudier la position relative de \(\mathcal{C}_f\) et \(\mathcal{C}_g\), on pose \(h(x) = f(x)-g(x)\) et on étudie le <strong>signe de \(h\)</strong>, c'est-à-dire les variations de \(h\) via \(h'\).</p>
+
+  <h3>Outil interactif — Position relative</h3>
+  <div class="ctrls">
+    <div class="cg"><label>a =</label><input type="range" id="pos-a" min="-3" max="3" value="1" step=".25"><span class="val" id="pos-a-v">1</span></div>
+    <div class="cg"><label>b =</label><input type="range" id="pos-b" min="-6" max="6" value="-2" step=".5"><span class="val" id="pos-b-v">−2</span></div>
+    <div class="cg"><label>c =</label><input type="range" id="pos-c" min="-6" max="6" value="0" step=".5"><span class="val" id="pos-c-v">0</span></div>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted);font-style:italic">f(x) = ax²+bx+c &nbsp;·&nbsp; g(x) = x (comparer un trinôme et une droite)</p>
+  <div class="cvs-wrap"><canvas id="c-pos" width="660" height="340"></canvas></div>
+  <div id="pos-res"></div>
+</div>
+
+<!-- ══════════ 06 — TRINÔME ET DÉRIVÉE ══════════ -->
+<div class="section fi" id="trinome">
+  <span class="sec-tag">06 — Polynôme du second degré</span>
+  <h2>Trinôme, dérivée et variations</h2>
+
+  <p>Pour \(f(x)=ax^2+bx+c\), on a \(f'(x)=2ax+b\). La dérivée s'annule en \(\alpha = -\dfrac{b}{2a}\), point du sommet de la parabole.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0">
+    <div class="card teal" data-lbl="a > 0 (parabole vers le haut)">
+      <table class="vtbl">
+        <tr><th>x</th><th>−∞</th><th></th><th>α</th><th></th><th>+∞</th></tr>
+        <tr><td>f'(x)</td><td colspan="2" class="teal">−</td><td class="ze">0</td><td colspan="2" class="teal">+</td></tr>
+        <tr><td>f(x)</td><td class="vmax">↘</td><td></td><td class="vmin">min</td><td></td><td class="vmax">↗</td></tr>
+      </table>
+    </div>
+    <div class="card rose" data-lbl="a < 0 (parabole vers le bas)">
+      <table class="vtbl">
+        <tr><th>x</th><th>−∞</th><th></th><th>α</th><th></th><th>+∞</th></tr>
+        <tr><td>f'(x)</td><td colspan="2" class="rose">+</td><td class="ze">0</td><td colspan="2" class="rose">−</td></tr>
+        <tr><td>f(x)</td><td class="vmin">↗</td><td></td><td class="vmax">max</td><td></td><td class="vmin">↘</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Outil — Tableau de variations d'un trinôme</h3>
+  <div class="ctrls">
+    <div class="cg"><label>a =</label><input type="range" id="tri-a" min="-3" max="3" value="1" step=".5"><span class="val" id="tri-a-v">1</span></div>
+    <div class="cg"><label>b =</label><input type="range" id="tri-b" min="-8" max="8" value="-4" step="1"><span class="val" id="tri-b-v">−4</span></div>
+    <div class="cg"><label>c =</label><input type="range" id="tri-c" min="-8" max="8" value="1" step="1"><span class="val" id="tri-c-v">1</span></div>
+  </div>
+  <div class="cvs-wrap"><canvas id="c-tri" width="660" height="320"></canvas></div>
+  <div id="tri-res"></div>
+</div>
+
+<!-- ══════════ 07 — NEWTON ══════════ -->
+<div class="section fi" id="newton">
+  <span class="sec-tag">07 — Algorithme</span>
+  <h2>Méthode de Newton</h2>
+
+  <p>La méthode de Newton permet d'approcher une racine d'une fonction \(f\) à partir d'un point de départ \(x_0\). À chaque étape, on remplace la courbe par sa <strong>tangente</strong> et on prend comme nouveau point l'intersection de cette tangente avec l'axe des abscisses :</p>
+
+  <div class="fm">\[x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}\]</div>
+
+  <div class="card" data-lbl="Cas favorables">
+    <p style="margin:0">La méthode converge rapidement quand : \(f\) est deux fois dérivable, \(f'\) ne s'annule pas près de la racine, et \(x_0\) est suffisamment proche de la racine. On évite les points d'inflexion.</p>
+  </div>
+
+  <h3>Simulation interactive</h3>
+  <div class="ctrls">
+    <div class="cg"><label>Fonction :</label>
+      <select id="nwt-fn" onchange="runNewton()" style="font-family:var(--mono);font-size:.73rem;padding:5px 10px;border:1px solid var(--line);background:var(--bg2);color:var(--ivory);">
+        <option value="x2m2">x²−2 (√2)</option>
+        <option value="x2m3">x²−3 (√3)</option>
+        <option value="cubic">x³−x−1</option>
+        <option value="x3m7">x³−7</option>
+      </select>
+    </div>
+    <div class="cg"><label>x₀ =</label><input type="range" id="nwt-x0" min="0.5" max="4" value="2" step=".1"><span class="val" id="nwt-x0-v">2.0</span></div>
+    <div class="cg"><label>Étapes :</label><input type="range" id="nwt-k" min="1" max="8" value="4" step="1"><span class="val" id="nwt-k-v">4</span></div>
+  </div>
+  <div class="cvs-wrap"><canvas id="c-nwt" width="660" height="340"></canvas></div>
+  <div id="nwt-table"></div>
+</div>
+
+<!-- ══════════ 08 — QCM ══════════ -->
+<div class="section fi" id="qcm">
+  <span class="sec-tag">08 — S'entraîner</span>
+  <h2>QCM interactif</h2>
+  <div class="qcm">
+    <div class="qcm-top">
+      <div class="timer" id="qcm-timer">00:00</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="tPause()" id="t-btn" style="padding:5px 12px;font-size:.65rem">⏸</button>
+        <button class="btn" onclick="tReset()" style="padding:5px 12px;font-size:.65rem">↺</button>
+      </div>
+      <div class="tgl-row">
+        <label class="tgl"><input type="checkbox" id="t-show" checked onchange="tShowTgl()"><span class="tgl-s"></span></label>
+        <span class="tgl-lbl">Chrono</span>
+      </div>
+      <div class="score-pill" id="q-score">Score : 0 / 0</div>
+    </div>
+    <div class="qcm-body" id="qcm-body"></div>
+    <div class="qcm-foot">
+      <button class="btn on" onclick="qNext()">Question suivante →</button>
+      <button class="btn" onclick="qShuffle()">↻ Nouveau QCM</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 09 — CONTACT ══════════ -->
+<div class="section fi" id="contact">
+  <span class="sec-tag">09 — Contact &amp; Ressources</span>
+  <h2>Prendre rendez-vous</h2>
+  <div class="link-grid">
+    <a class="link-card" href="https://forms.gle/JEVVRr9GfTMru5mM8" target="_blank" rel="noopener"><div class="lc-icon">📋</div><div class="lc-title">Formulaire</div><div class="lc-sub">Google Forms</div></a>
+    <a class="link-card" href="https://calendly.com/didaskalosmanthanon/30min" target="_blank" rel="noopener"><div class="lc-icon">🎓</div><div class="lc-title">Élèves — 30 min</div><div class="lc-sub">Calendly</div></a>
+    <a class="link-card" href="https://calendly.com/didaskalosmanthanon/appel-pro-formation-ou-collaboration-45-min" target="_blank" rel="noopener"><div class="lc-icon">👨‍🏫</div><div class="lc-title">Profs &amp; formateurs — 45 min</div><div class="lc-sub">Calendly</div></a>
+    <a class="link-card" href="https://calendly.com/didaskalosmanthanon/point-parents-presentation-de-l-outil-15-min" target="_blank" rel="noopener"><div class="lc-icon">👨‍👩‍👧</div><div class="lc-title">Parents — 15 min</div><div class="lc-sub">Calendly</div></a>
+  </div>
+  <h3>QR Codes</h3>
+  <div class="qr-row">
+    <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?size=96x96&color=d4a843&bgcolor=1a0a2e&data=https://forms.gle/JEVVRr9GfTMru5mM8" alt="QR"><div class="qr-lbl">Formulaire</div></div>
+    <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?size=96x96&color=d4a843&bgcolor=1a0a2e&data=https://calendly.com/didaskalosmanthanon/30min" alt="QR"><div class="qr-lbl">RDV Élèves</div></div>
+    <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?size=96x96&color=d4a843&bgcolor=1a0a2e&data=https://calendly.com/didaskalosmanthanon/appel-pro-formation-ou-collaboration-45-min" alt="QR"><div class="qr-lbl">RDV Profs</div></div>
+    <div class="qr-item"><img src="https://api.qrserver.com/v1/create-qr-code/?size=96x96&color=d4a843&bgcolor=1a0a2e&data=https://calendly.com/didaskalosmanthanon/point-parents-presentation-de-l-outil-15-min" alt="QR"><div class="qr-lbl">RDV Parents</div></div>
+  </div>
+</div>
+
+<div class="deco-bar" style="margin-top:0"></div>
+<footer style="background:var(--bg2);color:var(--muted);text-align:center;padding:22px;font-family:var(--mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;">
+  ◆ Variations &amp; Courbes représentatives · Première · Programme officiel 2021 ◆
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
