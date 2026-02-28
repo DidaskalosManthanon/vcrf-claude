@@ -6,7 +6,8 @@
 <title>Dérivée & Variations — Première</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<script src="https://skulpt.org/js/skulpt.min.js"></script>
+<script src="https://skulpt.org/js/skulpt-stdlib.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;1,400;1,600&display=swap');
 
@@ -1790,33 +1791,11 @@ window.checkAnswer = function(qIdx, optIdx) {
 };
 
 // ═══════════════════════════════════════════════════
-// PYODIDE — Python editor
+// SKULPT — Python editor (remplace Pyodide)
+// Skulpt est un interpréteur Python pur JS :
+// pas de WebAssembly, pas de CORS, fonctionne
+// sur GitHub Pages sans aucune configuration.
 // ═══════════════════════════════════════════════════
-let pyodide = null;
-let pyodideReady = false;
-
-async function initPyodide() {
-  try {
-    pyodide = await loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
-    });
-    pyodideReady = true;
-
-    // Enable run button
-    const btn = document.getElementById('pyRunBtn');
-    if (btn) { btn.disabled = false; }
-
-    // Hide loader
-    const loader = document.getElementById('pyLoader');
-    if (loader) loader.style.display = 'none';
-
-    setStatus('done', 'Python prêt ✓');
-  } catch(e) {
-    setStatus('err', 'Erreur de chargement Pyodide');
-    const loader = document.getElementById('pyLoader');
-    if (loader) loader.innerHTML = '<span style="color:var(--accent3)">⚠ Impossible de charger Pyodide (connexion requise)</span>';
-  }
-}
 
 function setStatus(state, text) {
   const dot = document.getElementById('pyStatusDot');
@@ -1826,8 +1805,18 @@ function setStatus(state, text) {
   txt.textContent = text;
 }
 
-async function runPython() {
-  if (!pyodideReady) return;
+function initPyodide() {
+  // Skulpt est synchrone et prêt immédiatement dès
+  // que ses deux scripts sont chargés — pas besoin
+  // d'initialisation asynchrone.
+  const btn = document.getElementById('pyRunBtn');
+  if (btn) btn.disabled = false;
+  const loader = document.getElementById('pyLoader');
+  if (loader) loader.style.display = 'none';
+  setStatus('done', 'Python prêt ✓');
+}
+
+function runPython() {
   const code = document.getElementById('pyCode').value;
   const output = document.getElementById('pyOutput');
   const btn = document.getElementById('pyRunBtn');
@@ -1838,24 +1827,33 @@ async function runPython() {
   btn.textContent = '⏳ Exécution…';
   setStatus('running', 'Exécution en cours…');
 
-  // Capture stdout
   let captured = '';
-  pyodide.setStdout({ batched: s => { captured += s + '\n'; } });
-  pyodide.setStderr({ batched: s => { captured += '⚠ ' + s + '\n'; } });
 
-  try {
-    await pyodide.runPythonAsync(code);
+  Sk.configure({
+    output: txt => { captured += txt; },
+    read: file => {
+      if (Sk.builtinFiles && Sk.builtinFiles.files[file]) {
+        return Sk.builtinFiles.files[file];
+      }
+      throw new Error(`File not found: '${file}'`);
+    },
+    __future__: Sk.python3
+  });
+
+  Sk.misceval.asyncToPromise(() =>
+    Sk.importMainWithBody('<stdin>', false, code, true)
+  ).then(() => {
     output.className = 'py-output visible success';
     output.textContent = captured.trim() || '(aucune sortie)';
-    setStatus('done', `Exécution terminée`);
-  } catch(err) {
+    setStatus('done', 'Exécution terminée');
+  }).catch(err => {
     output.className = 'py-output visible error';
-    output.textContent = err.message || String(err);
+    output.textContent = err.toString();
     setStatus('err', 'Erreur d\'exécution');
-  }
-
-  btn.disabled = false;
-  btn.textContent = '▶ Exécuter';
+  }).finally(() => {
+    btn.disabled = false;
+    btn.textContent = '▶ Exécuter';
+  });
 }
 
 function downloadPython() {
