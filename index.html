@@ -936,6 +936,7 @@ print(f"√2 ≈ {racine:.10f}")</textarea>
         <div class="timer-display" id="timerDisplay">00:00</div>
         <button class="btn" id="btnToggleTimer" onclick="toggleTimer()">⏱ Masquer</button>
         <button class="btn" id="btnPauseTimer" onclick="pauseTimer()">⏸ Pause</button>
+        <button class="btn" onclick="resetTimer()" title="Remettre le chrono à zéro">↺ Reset</button>
       </div>
       <button class="btn btn-accent" onclick="generateQCM()">Nouveau QCM ↻</button>
     </div>
@@ -1597,6 +1598,13 @@ function pauseTimer() {
   document.getElementById('btnPauseTimer').textContent = timerPaused ? '▶ Reprendre' : '⏸ Pause';
 }
 
+function resetTimer() {
+  timerSec = 0;
+  timerPaused = false;
+  document.getElementById('btnPauseTimer').textContent = '⏸ Pause';
+  updateTimerDisplay();
+}
+
 function rnd(a, b) { return Math.round(a + Math.random()*(b-a)); }
 function rndF(a, b, d=1) { return parseFloat((a + Math.random()*(b-a)).toFixed(d)); }
 function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
@@ -1742,42 +1750,34 @@ function renderQ(q, idx) {
   </div>`;
 }
 
-const qData = [];
-function generateQCMWrapped() {
-  qData.length = 0;
-  score = 0; total = 0;
-}
-
 let globalQData = [];
 
-const origGenerate = generateQCM;
 window.generateQCM = function() {
   globalQData = [];
   score = 0; total = 0;
   document.getElementById('scoreDisplay').textContent = '0 / 0';
   startTimer();
   const container = document.getElementById('qcmContainer');
-  const questions = [];
-  for (let i = 0; i < 6; i++) {
-    const q = genQuestion();
-    globalQData.push(q);
-    questions.push(q);
-  }
-  container.innerHTML = questions.map((q,i) => renderQ(q, i)).join('');
+  for (let i = 0; i < 6; i++) globalQData.push(genQuestion());
+  container.innerHTML = globalQData.map((q,i) => renderQ(q, i)).join('');
   if (window.MathJax) MathJax.typesetPromise([container]).catch(()=>{});
 };
 
+function generateQCM() { window.generateQCM(); }
+
 window.checkAnswer = function(qIdx, optIdx) {
   const q = globalQData[qIdx];
+  if (!q) return;
   const opts = document.querySelectorAll(`#opts${qIdx} .option`);
-  const chosen = opts[optIdx];
-  const isCorrect = chosen.textContent === q.correct;
+  // Compare by index: find which index holds the correct answer
+  const correctIdx = q.opts.indexOf(q.correct);
+  const isCorrect = (optIdx === correctIdx);
 
-  opts.forEach(o => {
+  opts.forEach((o, i) => {
     o.classList.add('disabled');
-    if (o.textContent === q.correct) o.classList.add('correct');
+    if (i === correctIdx) o.classList.add('correct');
   });
-  if (!isCorrect) chosen.classList.add('wrong');
+  if (!isCorrect) opts[optIdx].classList.add('wrong');
 
   total++;
   if (isCorrect) score++;
@@ -1785,7 +1785,7 @@ window.checkAnswer = function(qIdx, optIdx) {
 
   const fb = document.getElementById(`fb${qIdx}`);
   fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
-  fb.textContent = isCorrect ? '✓ Correct !' : `✗ La bonne réponse est : ${q.correct}`;
+  fb.textContent = isCorrect ? '✓ Correct !' : `✗ Incorrect.`;
   if (window.MathJax) MathJax.typesetPromise([fb]).catch(()=>{});
 };
 
@@ -1797,7 +1797,9 @@ let pyodideReady = false;
 
 async function initPyodide() {
   try {
-    pyodide = await loadPyodide();
+    pyodide = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
+    });
     pyodideReady = true;
 
     // Enable run button
