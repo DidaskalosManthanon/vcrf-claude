@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dérivée & Variations — Première</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;1,400;1,600&display=swap');
+
+  :root {
+    --bg: #0b0c10;
+    --surface: #12141a;
+    --surface2: #1a1d26;
+    --border: #2a2d3a;
+    --accent: #e8c547;
+    --accent2: #5bc8af;
+    --accent3: #e05c7a;
+    --text: #e8e6e0;
+    --muted: #7a7d8a;
+    --card-bg: #14161e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lora', serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11,12,16,0.92);
+    backdrop-filter: blur(10px);
+  }
+
+  .badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #0b0c10;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  header h1 span { color: var(--accent); }
+
+  nav {
+    margin-left: auto;
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(232,197,71,0.06);
+  }
+
+  /* MAIN */
+  main { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+  section {
+    padding: 3rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  p { color: #c8c6c0; margin-bottom: 1rem; }
+
+  /* CARDS GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-title .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-green { background: var(--accent2); }
+  .dot-red { background: var(--accent3); }
+  .dot-yellow { background: var(--accent); }
+
+  .card p { font-size: 0.9rem; margin: 0; }
+
+  /* THEOREM BOX */
+  .theorem {
+    background: rgba(232,197,71,0.04);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .theorem .label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .theorem p { color: var(--text); margin: 0.4rem 0; font-size: 0.95rem; }
+
+  /* INTERACTIVE PANEL */
+  .interactive {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .interactive-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .interactive-title::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* BUTTONS */
+  .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.active { background: var(--accent); color: #0b0c10; border-color: var(--accent); }
+  .btn-accent { background: var(--accent); color: #0b0c10; border-color: var(--accent); }
+  .btn-accent:hover { opacity: 0.85; }
+  .btn-teal { border-color: var(--accent2); color: var(--accent2); }
+  .btn-teal:hover { background: rgba(91,200,175,0.1); }
+
+  /* CANVAS */
+  canvas { display: block; border-radius: 6px; }
+
+  .canvas-wrap {
+    position: relative;
+    background: #0d0f14;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  /* SLIDERS */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  .slider-row label { color: var(--muted); min-width: 60px; }
+  .slider-row span { color: var(--accent); min-width: 50px; text-align: right; }
+
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+
+  /* VARIATION TABLE */
+  .var-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+
+  .var-table td, .var-table th {
+    border: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    text-align: center;
+  }
+
+  .var-table th {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  .arrow-up { color: var(--accent2); font-size: 1.2rem; }
+  .arrow-down { color: var(--accent3); font-size: 1.2rem; }
+  .sign-pos { color: var(--accent2); font-weight: 700; }
+  .sign-neg { color: var(--accent3); font-weight: 700; }
+  .sign-zero { color: var(--muted); }
+
+  /* QCM */
+  .qcm-question {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .question-text {
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+  .option {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface2);
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+    text-align: left;
+  }
+
+  .option:hover:not(.disabled) { border-color: var(--accent); background: rgba(232,197,71,0.05); }
+  .option.correct { border-color: var(--accent2); background: rgba(91,200,175,0.1); color: var(--accent2); }
+  .option.wrong { border-color: var(--accent3); background: rgba(224,92,122,0.1); color: var(--accent3); }
+  .option.disabled { pointer-events: none; opacity: 0.6; }
+
+  /* QCM TIMER */
+  .qcm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .score-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent);
+  }
+
+  .timer-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .timer-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    min-width: 60px;
+    text-align: right;
+    transition: color 0.3s;
+  }
+
+  .timer-display.warning { color: var(--accent3); }
+
+  /* NEWTON METHOD */
+  .newton-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .newton-table th, .newton-table td {
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.75rem;
+    text-align: right;
+  }
+
+  .newton-table th {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .newton-table tr:last-child { background: rgba(232,197,71,0.05); }
+
+  /* FEEDBACK */
+  .feedback {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    display: none;
+  }
+
+  .feedback.correct { background: rgba(91,200,175,0.1); color: var(--accent2); border: 1px solid var(--accent2); display: block; }
+  .feedback.wrong { background: rgba(224,92,122,0.1); color: var(--accent3); border: 1px solid var(--accent3); display: block; }
+
+  /* INFO ROW */
+  .info-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .info-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .info-chip span { color: var(--accent); }
+
+  /* STEP BUTTONS */
+  .step-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
+  }
+
+  .step-controls span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* PYTHON EDITOR */
+  .py-editor-wrap {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1rem 0;
+    background: #090b0f;
+  }
+
+  .py-editor-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #0f1118;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .py-editor-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .py-dots { display: flex; gap: 5px; }
+  .py-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #e05c7a; }
+  .dot-y { background: #e8c547; }
+  .dot-g { background: #5bc8af; }
+
+  .py-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.28rem 0.7rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.18s;
+    background: var(--surface2);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .py-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .py-btn.run {
+    background: var(--accent2);
+    color: #0b0c10;
+    border-color: var(--accent2);
+  }
+
+  .py-btn.run:hover { opacity: 0.85; }
+  .py-btn.run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .py-btn.dl { border-color: var(--accent); color: var(--accent); }
+  .py-btn.dl:hover { background: rgba(232,197,71,0.08); }
+
+  .py-textarea {
+    display: block;
+    width: 100%;
+    min-height: 200px;
+    background: #090b0f;
+    color: #c9d1d9;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.75;
+    border: none;
+    outline: none;
+    resize: vertical;
+    padding: 1rem 1.25rem;
+    tab-size: 4;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+    caret-color: var(--accent);
+  }
+
+  .py-textarea::selection { background: rgba(232,197,71,0.2); }
+
+  .py-output {
+    border-top: 1px solid var(--border);
+    padding: 0.75rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    min-height: 2.5rem;
+    white-space: pre-wrap;
+    color: #c9d1d9;
+    display: none;
+  }
+
+  .py-output.visible { display: block; }
+  .py-output.error { color: var(--accent3); }
+  .py-output.success { color: var(--accent2); }
+
+  .py-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    padding: 0.25rem 0.75rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #0b0d12;
+  }
+
+  .py-status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.3s;
+  }
+
+  .py-status-dot.running { background: var(--accent); animation: pulse 0.8s infinite; }
+  .py-status-dot.done { background: var(--accent2); }
+  .py-status-dot.err { background: var(--accent3); }
+
+  @media (max-width: 640px) {
+    .card-grid { grid-template-columns: 1fr; }
+    .options { grid-template-columns: 1fr; }
+    nav { display: none; }
+    h2 { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">1ère</div>
+  <h1>Dérivée & <span>Variations</span></h1>
+  <nav>
+    <a href="#theoreme" class="active">Théorème</a>
+    <a href="#extremums">Extremums</a>
+    <a href="#polynome2">Degré 2</a>
+    <a href="#optimisation">Optimisation</a>
+    <a href="#position">Position relative</a>
+    <a href="#newton">Newton</a>
+    <a href="#qcm">QCM</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════ 01 THÉORÈME ══════════════════════════════ -->
+<section id="theoreme">
+  <div class="section-label">01 — Contenus</div>
+  <h2>Dérivée et sens de variation</h2>
+
+  <p>Le lien fondamental entre le signe de la dérivée et le sens de variation d'une fonction dérivable est l'outil central de ce chapitre.</p>
+
+  <div class="theorem">
+    <div class="label">Théorème fondamental</div>
+    <p>Soit \(f\) une fonction dérivable sur un intervalle \(I\).</p>
+    <p>— \(f\) est <strong>croissante</strong> sur \(I\) \(\;\Longleftrightarrow\;\) \(f'(x) \geq 0\) pour tout \(x \in I\)</p>
+    <p>— \(f\) est <strong>décroissante</strong> sur \(I\) \(\;\Longleftrightarrow\;\) \(f'(x) \leq 0\) pour tout \(x \in I\)</p>
+    <p>— \(f\) est <strong>constante</strong> sur \(I\) \(\;\Longleftrightarrow\;\) \(f'(x) = 0\) pour tout \(x \in I\)</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title"><div class="dot dot-green"></div>f'(x) &gt; 0</div>
+      <p>La tangente est <em>montante</em>. La fonction croît : quand \(x\) augmente, \(f(x)\) augmente.</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot dot-red"></div>f'(x) &lt; 0</div>
+      <p>La tangente est <em>descendante</em>. La fonction décroît : quand \(x\) augmente, \(f(x)\) diminue.</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot dot-yellow"></div>f'(x) = 0</div>
+      <p>La tangente est <em>horizontale</em>. C'est un candidat pour un extremum local.</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot dot-green"></div>f'(x) change de signe</div>
+      <p>La fonction change de monotonie : c'est un extremum local (maximum ou minimum).</p>
+    </div>
+  </div>
+
+  <h3>Outil interactif — Dérivée et variations</h3>
+  <div class="interactive">
+    <div class="interactive-title">Outil interactif — observer f et f' simultanément</div>
+
+    <div class="btn-group" id="funcBtns">
+      <button class="btn active" onclick="setFunc(0)">x² − 3x + 1</button>
+      <button class="btn" onclick="setFunc(1)">x³ − 3x</button>
+      <button class="btn" onclick="setFunc(2)">−x² + 4x − 1</button>
+      <button class="btn" onclick="setFunc(3)">x³ − x² − x + 1</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;">Courbe de f</div>
+        <div class="canvas-wrap"><canvas id="cvF" width="430" height="260"></canvas></div>
+      </div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;">Courbe de f' (dérivée)</div>
+        <div class="canvas-wrap"><canvas id="cvDer" width="430" height="260"></canvas></div>
+      </div>
+    </div>
+
+    <div id="varTableContainer" style="margin-top:1rem;"></div>
+
+    <div class="info-row">
+      <div class="info-chip">Zones vertes : <span>f' &gt; 0, f croissante</span></div>
+      <div class="info-chip">Zones rouges : <span>f' &lt; 0, f décroissante</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 02 EXTREMUMS ══════════════════════════════ -->
+<section id="extremums">
+  <div class="section-label">02 — Contenus</div>
+  <h2>Extremums — tangente et nombre dérivé</h2>
+
+  <div class="theorem">
+    <div class="label">Condition nécessaire d'extremum</div>
+    <p>Si \(f\) admet un extremum local en \(x_0\) et est dérivable en \(x_0\), alors \(f'(x_0) = 0\).</p>
+    <p>La tangente à la courbe en ce point est <strong>horizontale</strong>.</p>
+    <p><em>Attention :</em> la réciproque est fausse — \(f'(x_0) = 0\) n'implique pas forcément un extremum (ex : \(x^3\) en 0).</p>
+  </div>
+
+  <div class="theorem">
+    <div class="label">Condition suffisante</div>
+    <p>Si \(f'(x_0) = 0\) et que \(f'\) <strong>change de signe</strong> en \(x_0\), alors \(f\) admet un extremum local en \(x_0\) :</p>
+    <p>— Si \(f'\) passe de \(+\) à \(-\) : <strong>maximum local</strong></p>
+    <p>— Si \(f'\) passe de \(-\) à \(+\) : <strong>minimum local</strong></p>
+  </div>
+
+  <h3>Outil interactif — tangente et extremum</h3>
+  <div class="interactive">
+    <div class="interactive-title">Outil interactif — déplacer le point de tangence</div>
+    <div class="btn-group" id="extFuncBtns">
+      <button class="btn active" onclick="setExtFunc(0)">x³ − 3x</button>
+      <button class="btn" onclick="setExtFunc(1)">−x² + 2x + 1</button>
+      <button class="btn" onclick="setExtFunc(2)">x³ − x² − x + 1</button>
+    </div>
+    <div class="canvas-wrap"><canvas id="cvExt" width="860" height="320"></canvas></div>
+    <div class="slider-row">
+      <label>Point x₀</label>
+      <input type="range" id="sliderX0" min="-2.5" max="2.5" step="0.01" value="1" oninput="updateExt()">
+      <span id="x0val">1.00</span>
+    </div>
+    <div class="info-row" id="extInfo">
+      <div class="info-chip">f(x₀) = <span id="extFval">—</span></div>
+      <div class="info-chip">f'(x₀) = <span id="extDval">—</span></div>
+      <div class="info-chip" id="extNature">—</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 03 POLYNÔME 2 ══════════════════════════════ -->
+<section id="polynome2">
+  <div class="section-label">03 — Contenus</div>
+  <h2>Fonction polynôme du second degré</h2>
+
+  <p>Toute fonction polynôme de degré 2 s'écrit \(f(x) = ax^2 + bx + c\) avec \(a \neq 0\).</p>
+
+  <div class="theorem">
+    <div class="label">Dérivée et extremum</div>
+    <p>\(f'(x) = 2ax + b\)</p>
+    <p>\(f'(x) = 0 \;\Leftrightarrow\; x = -\dfrac{b}{2a}\) : c'est le seul extremum de \(f\).</p>
+    <p>— Si \(a > 0\) : <strong>minimum</strong> en \(x_s = -\frac{b}{2a}\), la parabole est tournée vers le haut.</p>
+    <p>— Si \(a < 0\) : <strong>maximum</strong> en \(x_s = -\frac{b}{2a}\), la parabole est tournée vers le bas.</p>
+    <p>L'extremum vaut \(f\!\left(-\frac{b}{2a}\right) = c - \frac{b^2}{4a}\).</p>
+  </div>
+
+  <h3>Outil interactif — parabole \(ax^2 + bx + c\)</h3>
+  <div class="interactive">
+    <div class="interactive-title">Outil interactif — faire varier a, b, c</div>
+    <div class="canvas-wrap"><canvas id="cvPoly" width="860" height="300"></canvas></div>
+    <div class="slider-row">
+      <label>\(a\)</label>
+      <input type="range" id="slA" min="-3" max="3" step="0.1" value="1" oninput="updatePoly()">
+      <span id="aVal">1.0</span>
+    </div>
+    <div class="slider-row">
+      <label>\(b\)</label>
+      <input type="range" id="slB" min="-6" max="6" step="0.1" value="-2" oninput="updatePoly()">
+      <span id="bVal">−2.0</span>
+    </div>
+    <div class="slider-row">
+      <label>\(c\)</label>
+      <input type="range" id="slC" min="-5" max="5" step="0.1" value="0" oninput="updatePoly()">
+      <span id="cVal">0.0</span>
+    </div>
+    <div id="polyInfo" class="info-row">
+      <div class="info-chip">Sommet : x_s = <span id="polyXs">—</span></div>
+      <div class="info-chip">Extremum : f(x_s) = <span id="polyFs">—</span></div>
+      <div class="info-chip" id="polyType">—</div>
+    </div>
+    <div id="polyVarTable" style="margin-top:1rem;"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 04 OPTIMISATION ══════════════════════════════ -->
+<section id="optimisation">
+  <div class="section-label">04 — Capacités</div>
+  <h2>Problème d'optimisation</h2>
+
+  <p>On cherche à maximiser ou minimiser une quantité dans une situation géométrique ou physique. La dérivée permet de trouver l'extremum exact.</p>
+
+  <div class="card" style="margin: 1rem 0;">
+    <div class="card-title"><div class="dot dot-yellow"></div>Exemple — aire maximale d'un rectangle</div>
+    <p style="margin-top:0.5rem;font-size:0.9rem;">Un rectangle a un périmètre fixé \(P = 20\). On note \(x\) la longueur et \(y\) la largeur.
+    On a \(2x + 2y = 20\), donc \(y = 10 - x\).
+    L'aire est \(A(x) = x(10-x) = -x^2 + 10x\) pour \(x \in [0, 10]\).
+    \(A'(x) = -2x + 10 = 0 \Rightarrow x = 5\). Comme \(a = -1 < 0\), c'est un maximum : \(A(5) = 25\).</p>
+  </div>
+
+  <h3>Outil interactif — optimisation dynamique</h3>
+  <div class="interactive">
+    <div class="interactive-title">Outil interactif — visualiser l'optimisation</div>
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem; align-items:start;">
+      <div>
+        <div class="canvas-wrap"><canvas id="cvOpt" width="560" height="300"></canvas></div>
+        <div class="slider-row" style="margin-top:0.75rem;">
+          <label>Longueur x</label>
+          <input type="range" id="slOptX" min="0.5" max="9.5" step="0.1" value="5" oninput="updateOpt()">
+          <span id="optXval">5.0</span>
+        </div>
+      </div>
+      <div id="optRect" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;">
+        <canvas id="cvRect" width="200" height="180"></canvas>
+        <div class="info-chip" style="font-size:0.8rem;">A = <span id="optAval">25</span></div>
+      </div>
+    </div>
+    <div id="optInfo" class="info-row">
+      <div class="info-chip">x = <span id="optX">5.0</span></div>
+      <div class="info-chip">y = <span id="optY">5.0</span></div>
+      <div class="info-chip">Aire max quand <span>x = 5</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 05 POSITION RELATIVE ══════════════════════════════ -->
+<section id="position">
+  <div class="section-label">05 — Capacités</div>
+  <h2>Position relative et inégalités</h2>
+
+  <p>Comparer deux fonctions \(f\) et \(g\) revient à étudier le signe de \(h = f - g\).</p>
+
+  <div class="theorem">
+    <div class="label">Méthode</div>
+    <p>Pour comparer \(f\) et \(g\) sur \(I\), on pose \(h(x) = f(x) - g(x)\).</p>
+    <p>— \(h(x) > 0\) sur \(I\) \(\;\Rightarrow\;\) la courbe de \(f\) est <strong>au-dessus</strong> de celle de \(g\) sur \(I\).</p>
+    <p>— \(h(x) < 0\) sur \(I\) \(\;\Rightarrow\;\) la courbe de \(f\) est <strong>en-dessous</strong> de celle de \(g\) sur \(I\).</p>
+    <p>Les variations de \(h\) (via \(h' = f' - g'\)) permettent d'établir une inégalité.</p>
+  </div>
+
+  <h3>Outil interactif — position relative</h3>
+  <div class="interactive">
+    <div class="interactive-title">Outil interactif — comparer deux courbes</div>
+    <div class="btn-group" id="posBtns">
+      <button class="btn active" onclick="setPosFunc(0)">x² vs 2x−1</button>
+      <button class="btn" onclick="setPosFunc(1)">x³ vs 3x−2</button>
+      <button class="btn" onclick="setPosFunc(2)">eˣ vs x+1</button>
+    </div>
+    <div class="canvas-wrap"><canvas id="cvPos" width="860" height="300"></canvas></div>
+    <div id="posInfo" class="info-row" style="margin-top:0.75rem;"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 06 NEWTON ══════════════════════════════ -->
+<section id="newton">
+  <div class="section-label">06 — Algorithme</div>
+  <h2>Méthode de Newton</h2>
+
+  <p>La méthode de Newton est un algorithme itératif pour approcher les zéros d'une fonction dérivable. On remplace la courbe par sa tangente en un point et on prend l'intersection avec l'axe des abscisses comme nouveau point.</p>
+
+  <div class="theorem">
+    <div class="label">Formule d'itération</div>
+    <p>À partir d'un point initial \(x_0\) (suffisamment proche du zéro), on calcule :</p>
+    <p>\[x_{n+1} = x_n - \dfrac{f(x_n)}{f'(x_n)}\]</p>
+    <p>La convergence est très rapide (quadratique) dans les cas favorables : le nombre de décimales exactes double à chaque étape.</p>
+  </div>
+
+  <div class="interactive">
+    <div class="interactive-title">Outil interactif — méthode de Newton</div>
+
+    <div class="btn-group" id="newtonFuncBtns">
+      <button class="btn active" onclick="setNewtonFunc(0)">x² − 2</button>
+      <button class="btn" onclick="setNewtonFunc(1)">x³ − x − 1</button>
+      <button class="btn" onclick="setNewtonFunc(2)">x² − x − 2</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;align-items:start;">
+      <div>
+        <div class="canvas-wrap"><canvas id="cvNewton" width="540" height="300"></canvas></div>
+        <div class="step-controls" style="margin-top:0.75rem;">
+          <button class="btn btn-teal" onclick="newtonPrev()">← Préc.</button>
+          <span id="newtonStepInfo">Étape 0 / x₀ = 2.00</span>
+          <button class="btn btn-accent" onclick="newtonNext()">Suiv. →</button>
+          <button class="btn" onclick="newtonReset()">↺ Reset</button>
+        </div>
+        <div class="slider-row">
+          <label>x₀ initial</label>
+          <input type="range" id="slNewtonX0" min="-3" max="3" step="0.1" value="2" oninput="newtonSetX0()">
+          <span id="newtonX0val">2.0</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">Convergence</div>
+        <table class="newton-table" id="newtonTable">
+          <thead><tr><th>n</th><th>xₙ</th><th>f(xₙ)</th><th>|erreur|</th></tr></thead>
+          <tbody id="newtonTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3>Code Python — méthode de Newton</h3>
+
+  <div id="pyLoader" style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);padding:0.5rem 0;display:flex;align-items:center;gap:0.6rem;">
+    <div class="py-status-dot running"></div>
+    Chargement de Python (Pyodide)…
+  </div>
+
+  <div class="py-editor-wrap">
+    <div class="py-editor-bar">
+      <div class="py-dots">
+        <div class="py-dot dot-r"></div>
+        <div class="py-dot dot-y"></div>
+        <div class="py-dot dot-g"></div>
+      </div>
+      <span class="py-editor-label">newton.py</span>
+      <button class="py-btn run" id="pyRunBtn" onclick="runPython()" disabled title="Exécuter (Ctrl+Entrée)">
+        ▶ Exécuter
+      </button>
+      <button class="py-btn dl" onclick="downloadPython()" title="Télécharger .py">
+        ⬇ .py
+      </button>
+    </div>
+    <textarea class="py-textarea" id="pyCode" spellcheck="false" onkeydown="handleTab(event)">def f(x):
+    return x**2 - 2
+
+def f_prime(x):
+    return 2*x
+
+def newton(f, f_prime, x0, n_iter=10):
+    x = x0
+    for i in range(n_iter):
+        fx = f(x)
+        fpx = f_prime(x)
+        if abs(fpx) < 1e-12:   # cas défavorable : dérivée nulle
+            break
+        x_new = x - fx / fpx
+        print(f"n={i}: x={x:.8f}, f(x)={fx:.2e}")
+        x = x_new
+    return x
+
+# Approche de √2 à partir de x₀ = 2
+racine = newton(f, f_prime, 2.0)
+print(f"√2 ≈ {racine:.10f}")</textarea>
+    <div class="py-output" id="pyOutput"></div>
+    <div class="py-status">
+      <div class="py-status-dot" id="pyStatusDot"></div>
+      <span id="pyStatusText">Prêt</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 07 QCM ══════════════════════════════ -->
+<section id="qcm">
+  <div class="section-label">07 — S'entraîner</div>
+  <h2>QCM interactif</h2>
+
+  <div class="qcm-header">
+    <div class="score-display" id="scoreDisplay">0 / 0</div>
+    <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+      <div class="timer-box">
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <button class="btn" id="btnToggleTimer" onclick="toggleTimer()">⏱ Masquer</button>
+        <button class="btn" id="btnPauseTimer" onclick="pauseTimer()">⏸ Pause</button>
+        <button class="btn" onclick="resetTimer()" title="Remettre le chrono à zéro">↺ Reset</button>
+      </div>
+      <button class="btn btn-accent" onclick="generateQCM()">Nouveau QCM ↻</button>
+    </div>
+  </div>
+
+  <div id="qcmContainer"></div>
+</section>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════
+function fmt(v, d=2) {
+  if (Math.abs(v) < 1e-9) return '0';
+  return parseFloat(v.toFixed(d)).toString();
+}
+
+function getCtx(id) {
+  const c = document.getElementById(id);
+  return { ctx: c.getContext('2d'), w: c.width, h: c.height };
+}
+
+function clearCanvas(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#0d0f14';
+  ctx.fillRect(0, 0, w, h);
+}
+
+function drawAxes(ctx, w, h, xMin, xMax, yMin, yMax) {
+  const toX = x => (x - xMin) / (xMax - xMin) * w;
+  const toY = y => h - (y - yMin) / (yMax - yMin) * h;
+
+  ctx.strokeStyle = '#2a2d3a';
+  ctx.lineWidth = 1;
+
+  // Grid
+  for (let x = Math.ceil(xMin); x <= Math.floor(xMax); x++) {
+    ctx.beginPath();
+    ctx.moveTo(toX(x), 0); ctx.lineTo(toX(x), h);
+    ctx.stroke();
+  }
+  for (let y = Math.ceil(yMin); y <= Math.floor(yMax); y++) {
+    ctx.beginPath();
+    ctx.moveTo(0, toY(y)); ctx.lineTo(w, toY(y));
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = '#4a4d5a';
+  ctx.lineWidth = 1.5;
+  // x-axis
+  if (yMin <= 0 && yMax >= 0) {
+    ctx.beginPath(); ctx.moveTo(0, toY(0)); ctx.lineTo(w, toY(0)); ctx.stroke();
+  }
+  // y-axis
+  if (xMin <= 0 && xMax >= 0) {
+    ctx.beginPath(); ctx.moveTo(toX(0), 0); ctx.lineTo(toX(0), h); ctx.stroke();
+  }
+
+  return { toX, toY };
+}
+
+function drawCurve(ctx, f, xMin, xMax, toX, toY, color, lw=2.5, n=400) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.lineJoin = 'round';
+  let first = true;
+  for (let i = 0; i <= n; i++) {
+    const x = xMin + i * (xMax - xMin) / n;
+    let y;
+    try { y = f(x); } catch(e) { first = true; continue; }
+    if (!isFinite(y) || Math.abs(y) > 1e6) { first = true; continue; }
+    const px = toX(x), py = toY(y);
+    if (first) { ctx.moveTo(px, py); first = false; }
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 01 — f vs f'
+// ═══════════════════════════════════════════════════
+const FUNCS = [
+  {
+    label: 'x²−3x+1',
+    f: x => x*x - 3*x + 1,
+    df: x => 2*x - 3,
+    zeros: [1.5],
+    intervals: [[-3, 1.5, '-'], [1.5, 4, '+']],
+    min: -3, max: 4, yMin: -3, yMax: 6,
+    dfMin: -6, dfMax: 6
+  },
+  {
+    label: 'x³−3x',
+    f: x => x*x*x - 3*x,
+    df: x => 3*x*x - 3,
+    zeros: [-1, 1],
+    intervals: [[-2.5, -1, '+'], [-1, 1, '-'], [1, 2.5, '+']],
+    min: -2.5, max: 2.5, yMin: -3.5, yMax: 3.5,
+    dfMin: -4, dfMax: 8
+  },
+  {
+    label: '−x²+4x−1',
+    f: x => -x*x + 4*x - 1,
+    df: x => -2*x + 4,
+    zeros: [2],
+    intervals: [[-1, 2, '+'], [2, 5, '-']],
+    min: -1, max: 5, yMin: -4, yMax: 5,
+    dfMin: -6, dfMax: 6
+  },
+  {
+    label: 'x³−x²−x+1',
+    f: x => x*x*x - x*x - x + 1,
+    df: x => 3*x*x - 2*x - 1,
+    zeros: [-1/3, 1],
+    intervals: [[-2, -1/3, '+'], [-1/3, 1, '-'], [1, 2.5, '+']],
+    min: -2, max: 2.5, yMin: -2, yMax: 4,
+    dfMin: -3, dfMax: 8
+  }
+];
+
+let curFunc = 0;
+
+function setFunc(i) {
+  curFunc = i;
+  document.querySelectorAll('#funcBtns .btn').forEach((b, j) => b.classList.toggle('active', j===i));
+  drawFuncSection();
+}
+
+function drawFuncSection() {
+  const fd = FUNCS[curFunc];
+  const { xMin: xm, max: xM, yMin, yMax, dfMin, dfMax } = { xMin: fd.min, ...fd };
+
+  // Draw f
+  const {ctx: c1, w: w1, h: h1} = getCtx('cvF');
+  clearCanvas(c1, w1, h1);
+  const {toX: tx1, toY: ty1} = drawAxes(c1, w1, h1, fd.min, fd.max, fd.yMin, fd.yMax);
+
+  // Color zones
+  const n = 300;
+  fd.intervals.forEach(([a, b, sign]) => {
+    c1.fillStyle = sign==='+' ? 'rgba(91,200,175,0.08)' : 'rgba(224,92,122,0.08)';
+    c1.fillRect(tx1(a), 0, tx1(b)-tx1(a), h1);
+  });
+
+  drawCurve(c1, fd.f, fd.min, fd.max, tx1, ty1, '#e8c547');
+
+  // Draw f'
+  const {ctx: c2, w: w2, h: h2} = getCtx('cvDer');
+  clearCanvas(c2, w2, h2);
+  const {toX: tx2, toY: ty2} = drawAxes(c2, w2, h2, fd.min, fd.max, fd.dfMin, fd.dfMax);
+
+  // zones on f'
+  fd.intervals.forEach(([a, b, sign]) => {
+    c2.fillStyle = sign==='+' ? 'rgba(91,200,175,0.08)' : 'rgba(224,92,122,0.08)';
+    c2.fillRect(tx2(a), 0, tx2(b)-tx2(a), h2);
+  });
+
+  // zero points
+  fd.zeros.forEach(z => {
+    c2.strokeStyle = '#e8c547';
+    c2.lineWidth = 1;
+    c2.setLineDash([4,4]);
+    c2.beginPath(); c2.moveTo(tx2(z), 0); c2.lineTo(tx2(z), h2); c2.stroke();
+    c2.setLineDash([]);
+    c2.fillStyle = '#e8c547';
+    c2.beginPath(); c2.arc(tx2(z), ty2(0), 5, 0, 2*Math.PI); c2.fill();
+  });
+
+  drawCurve(c2, fd.df, fd.min, fd.max, tx2, ty2, '#5bc8af');
+
+  // Build variation table
+  buildVarTable(fd);
+}
+
+function buildVarTable(fd) {
+  const container = document.getElementById('varTableContainer');
+  let html = `<table class="var-table"><thead><tr>
+    <th>x</th>
+    <th>${fd.min}</th>`;
+  fd.intervals.forEach(([a, b, sign]) => {
+    html += `<th></th><th>${fmt(b)}</th>`;
+  });
+  html += `</tr></thead><tbody>`;
+
+  // f' sign row
+  html += `<tr><td style="font-style:italic">f'(x)</td><td></td>`;
+  fd.intervals.forEach(([a, b, sign]) => {
+    html += `<td class="${sign==='+' ? 'sign-pos' : 'sign-neg'}">${sign}</td><td class="sign-zero">0</td>`;
+  });
+  html += `</tr>`;
+
+  // f variation row
+  html += `<tr><td style="font-style:italic">f(x)</td>`;
+  // start value
+  html += `<td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent)">${fmt(fd.f(fd.min),2)}</td>`;
+  fd.intervals.forEach(([a, b, sign]) => {
+    const arrow = sign==='+' ? '<span class="arrow-up">↗</span>' : '<span class="arrow-down">↘</span>';
+    html += `<td>${arrow}</td><td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent)">${fmt(fd.f(b),2)}</td>`;
+  });
+  html += `</tr></tbody></table>`;
+  container.innerHTML = html;
+  if (window.MathJax) MathJax.typesetPromise([container]).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 02 — EXTREMUMS
+// ═══════════════════════════════════════════════════
+const EXT_FUNCS = [
+  { f: x => x*x*x-3*x, df: x => 3*x*x-3, min:-2.5, max:2.5, yMin:-4, yMax:4 },
+  { f: x => -x*x+2*x+1, df: x => -2*x+2, min:-1, max:3, yMin:-2, yMax:3 },
+  { f: x => x*x*x-x*x-x+1, df: x => 3*x*x-2*x-1, min:-1.5, max:2, yMin:-1, yMax:4 }
+];
+let curExtFunc = 0;
+
+function setExtFunc(i) {
+  curExtFunc = i;
+  document.querySelectorAll('#extFuncBtns .btn').forEach((b, j) => b.classList.toggle('active', j===i));
+  updateExt();
+}
+
+function updateExt() {
+  const fd = EXT_FUNCS[curExtFunc];
+  const x0 = parseFloat(document.getElementById('sliderX0').value);
+  document.getElementById('x0val').textContent = fmt(x0,2);
+
+  const {ctx, w, h} = getCtx('cvExt');
+  clearCanvas(ctx, w, h);
+  const {toX, toY} = drawAxes(ctx, w, h, fd.min, fd.max, fd.yMin, fd.yMax);
+
+  drawCurve(ctx, fd.f, fd.min, fd.max, toX, toY, '#e8c547');
+
+  const y0 = fd.f(x0);
+  const d0 = fd.df(x0);
+
+  // Tangent
+  const tangent = x => y0 + d0*(x - x0);
+  drawCurve(ctx, tangent, fd.min, fd.max, toX, toY, '#5bc8af', 1.5, 100);
+
+  // Point
+  ctx.fillStyle = '#e8c547';
+  ctx.beginPath(); ctx.arc(toX(x0), toY(y0), 6, 0, 2*Math.PI); ctx.fill();
+
+  // Horizontal dashed if near 0
+  if (Math.abs(d0) < 0.2) {
+    ctx.strokeStyle = '#e05c7a';
+    ctx.setLineDash([5,5]);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, toY(y0)); ctx.lineTo(w, toY(y0)); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  document.getElementById('extFval').textContent = fmt(y0,3);
+  document.getElementById('extDval').textContent = fmt(d0,3);
+
+  const chip = document.getElementById('extNature');
+  if (Math.abs(d0) < 0.15) {
+    chip.innerHTML = `<span style="color:var(--accent)">Tangente horizontale — candidat extremum</span>`;
+  } else if (d0 > 0) {
+    chip.innerHTML = `<span style="color:var(--accent2)">f'> 0 → croissant</span>`;
+  } else {
+    chip.innerHTML = `<span style="color:var(--accent3)">f'< 0 → décroissant</span>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 03 — POLYNÔME 2
+// ═══════════════════════════════════════════════════
+function updatePoly() {
+  const a = parseFloat(document.getElementById('slA').value);
+  const b = parseFloat(document.getElementById('slB').value);
+  const c = parseFloat(document.getElementById('slC').value);
+  document.getElementById('aVal').textContent = fmt(a,1);
+  document.getElementById('bVal').textContent = fmt(b,1);
+  document.getElementById('cVal').textContent = fmt(c,1);
+
+  const f = x => a*x*x + b*x + c;
+  const df = x => 2*a*x + b;
+
+  const xMin = -5, xMax = 5;
+  const xs = -b/(2*a);
+  const fs = f(xs);
+  const yCenter = fs;
+  const yPad = 4;
+  const yMin = yCenter - yPad - 2;
+  const yMax = yCenter + yPad + 2;
+
+  const {ctx, w, h} = getCtx('cvPoly');
+  clearCanvas(ctx, w, h);
+  const {toX, toY} = drawAxes(ctx, w, h, xMin, xMax, yMin, yMax);
+
+  // Color zones
+  if (a !== 0) {
+    if (a > 0) {
+      ctx.fillStyle = 'rgba(224,92,122,0.06)';
+      ctx.fillRect(toX(xMin), 0, toX(xs)-toX(xMin), h);
+      ctx.fillStyle = 'rgba(91,200,175,0.06)';
+      ctx.fillRect(toX(xs), 0, toX(xMax)-toX(xs), h);
+    } else {
+      ctx.fillStyle = 'rgba(91,200,175,0.06)';
+      ctx.fillRect(toX(xMin), 0, toX(xs)-toX(xMin), h);
+      ctx.fillStyle = 'rgba(224,92,122,0.06)';
+      ctx.fillRect(toX(xs), 0, toX(xMax)-toX(xs), h);
+    }
+  }
+
+  drawCurve(ctx, f, xMin, xMax, toX, toY, '#e8c547');
+  drawCurve(ctx, df, xMin, xMax, toX, toY, '#5bc8af', 1.5);
+
+  // Vertex
+  if (isFinite(xs) && xs >= xMin && xs <= xMax) {
+    ctx.strokeStyle = '#e8c547';
+    ctx.setLineDash([4,4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(toX(xs), 0); ctx.lineTo(toX(xs), h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, toY(fs)); ctx.lineTo(w, toY(fs)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#e05c7a';
+    ctx.beginPath(); ctx.arc(toX(xs), toY(fs), 6, 0, 2*Math.PI); ctx.fill();
+  }
+
+  // Legend
+  ctx.font = '12px Syne';
+  ctx.fillStyle = '#e8c547'; ctx.fillText('f(x) = ax²+bx+c', 10, 20);
+  ctx.fillStyle = '#5bc8af'; ctx.fillText("f'(x) = 2ax+b", 10, 40);
+
+  // Info
+  document.getElementById('polyXs').textContent = fmt(xs,3);
+  document.getElementById('polyFs').textContent = fmt(fs,3);
+  const typeChip = document.getElementById('polyType');
+  if (a > 0) typeChip.innerHTML = `a > 0 → <span style="color:var(--accent2)">minimum</span>`;
+  else if (a < 0) typeChip.innerHTML = `a < 0 → <span style="color:var(--accent3)">maximum</span>`;
+  else typeChip.innerHTML = `a = 0 → <span style="color:var(--muted)">affine</span>`;
+
+  // Var table
+  const container = document.getElementById('polyVarTable');
+  const xs2 = fmt(xs,2);
+  let html = `<table class="var-table"><thead><tr><th>x</th><th>−∞</th><th></th><th>${xs2}</th><th></th><th>+∞</th></tr></thead><tbody>`;
+  html += `<tr><td>f'(x)</td>`;
+  if (a > 0) {
+    html += `<td></td><td class="sign-neg">−</td><td class="sign-zero">0</td><td class="sign-pos">+</td><td></td>`;
+  } else {
+    html += `<td></td><td class="sign-pos">+</td><td class="sign-zero">0</td><td class="sign-neg">−</td><td></td>`;
+  }
+  html += `</tr><tr><td>f(x)</td><td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent)">${a>0?'+∞':'−∞'}</td>`;
+  if (a > 0) {
+    html += `<td><span class="arrow-down">↘</span></td><td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent3)">${fmt(fs,2)}</td><td><span class="arrow-up">↗</span></td>`;
+  } else {
+    html += `<td><span class="arrow-up">↗</span></td><td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent2)">${fmt(fs,2)}</td><td><span class="arrow-down">↘</span></td>`;
+  }
+  html += `<td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent)">${a>0?'+∞':'−∞'}</td></tr></tbody></table>`;
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 04 — OPTIMISATION
+// ═══════════════════════════════════════════════════
+function updateOpt() {
+  const x = parseFloat(document.getElementById('slOptX').value);
+  const y = 10 - x;
+  const A = x * y;
+
+  document.getElementById('optXval').textContent = fmt(x,1);
+  document.getElementById('optX').textContent = fmt(x,1);
+  document.getElementById('optY').textContent = fmt(y,1);
+  document.getElementById('optAval').textContent = fmt(A,2);
+
+  // Graph A(x)
+  const {ctx, w, h} = getCtx('cvOpt');
+  clearCanvas(ctx, w, h);
+  const {toX, toY} = drawAxes(ctx, w, h, 0, 10, -5, 30);
+
+  const fA = xx => -xx*xx + 10*xx;
+  drawCurve(ctx, fA, 0, 10, toX, toY, '#5bc8af');
+
+  // Vertical dashed at x=5
+  ctx.strokeStyle = 'rgba(232,197,71,0.4)';
+  ctx.setLineDash([4,4]);
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(toX(5), 0); ctx.lineTo(toX(5), h); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Current point
+  ctx.fillStyle = '#e8c547';
+  ctx.beginPath(); ctx.arc(toX(x), toY(A), 6, 0, 2*Math.PI); ctx.fill();
+
+  // Label
+  ctx.font = '11px DM Mono';
+  ctx.fillStyle = '#e8c547';
+  ctx.fillText(`A(${fmt(x,1)}) = ${fmt(A,1)}`, toX(x)+8, toY(A)-8);
+
+  // Maximum marker
+  ctx.fillStyle = '#e05c7a';
+  ctx.beginPath(); ctx.arc(toX(5), toY(25), 6, 0, 2*Math.PI); ctx.fill();
+  ctx.fillText('MAX', toX(5)+8, toY(25)-8);
+
+  ctx.font = '11px Syne';
+  ctx.fillStyle = '#5bc8af';
+  ctx.fillText('A(x) = -x² + 10x', 10, 20);
+
+  // Rectangle visualization
+  const {ctx: cr, w: wr, h: hr} = getCtx('cvRect');
+  cr.clearRect(0, 0, wr, hr);
+  cr.fillStyle = '#0d0f14';
+  cr.fillRect(0, 0, wr, hr);
+
+  const maxDim = Math.max(x, y) || 1;
+  const scale = Math.min(130/maxDim, 130);
+  const rx = (wr - x*scale)/2;
+  const ry = (hr - y*scale)/2;
+
+  cr.fillStyle = 'rgba(91,200,175,0.15)';
+  cr.strokeStyle = x > 0 && y > 0 ? '#5bc8af' : '#e05c7a';
+  cr.lineWidth = 2;
+  cr.fillRect(rx, ry, x*scale, y*scale);
+  cr.strokeRect(rx, ry, x*scale, y*scale);
+
+  cr.font = '11px DM Mono';
+  cr.fillStyle = '#e8c547';
+  if (x > 0.5) cr.fillText(`${fmt(x,1)}`, rx + x*scale/2 - 10, ry + y*scale + 16);
+  if (y > 0.5) cr.fillText(`${fmt(y,1)}`, rx - 28, ry + y*scale/2 + 4);
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 05 — POSITION RELATIVE
+// ═══════════════════════════════════════════════════
+const POS_FUNCS = [
+  {
+    f: x => x*x, g: x => 2*x-1,
+    label: ['x²', '2x−1'],
+    min:-1, max:3, yMin:-3, yMax:6,
+    info: 'x²≥2x−1 pour tout x réel (h(x)=x²−2x+1=(x−1)²≥0)'
+  },
+  {
+    f: x => x*x*x, g: x => 3*x-2,
+    label: ['x³', '3x−2'],
+    min:-2, max:2.5, yMin:-5, yMax:8,
+    info: 'Les courbes se croisent en x=1 (et au voisinage de x≈−1.53)'
+  },
+  {
+    f: x => Math.exp(x), g: x => x+1,
+    label: ['eˣ', 'x+1'],
+    min:-2, max:3, yMin:-1, yMax:8,
+    info: 'eˣ≥x+1 pour tout x réel (tangente en x=0)'
+  }
+];
+let curPosFunc = 0;
+
+function setPosFunc(i) {
+  curPosFunc = i;
+  document.querySelectorAll('#posBtns .btn').forEach((b, j) => b.classList.toggle('active', j===i));
+  drawPos();
+}
+
+function drawPos() {
+  const fd = POS_FUNCS[curPosFunc];
+  const {ctx, w, h} = getCtx('cvPos');
+  clearCanvas(ctx, w, h);
+  const {toX, toY} = drawAxes(ctx, w, h, fd.min, fd.max, fd.yMin, fd.yMax);
+
+  // Fill zones
+  const n = 400;
+  const dx = (fd.max - fd.min)/n;
+  for (let i = 0; i < n; i++) {
+    const x = fd.min + i*dx;
+    let fy, gy;
+    try { fy = fd.f(x); gy = fd.g(x); } catch(e) { continue; }
+    if (!isFinite(fy) || !isFinite(gy)) continue;
+    if (fy >= gy) {
+      ctx.fillStyle = 'rgba(91,200,175,0.12)';
+    } else {
+      ctx.fillStyle = 'rgba(224,92,122,0.12)';
+    }
+    const y1 = Math.min(fy, gy), y2 = Math.max(fy, gy);
+    const py1 = toY(Math.min(y2, fd.yMax));
+    const py2 = toY(Math.max(y1, fd.yMin));
+    ctx.fillRect(toX(x), py1, Math.ceil(dx/(fd.max-fd.min)*w)+1, py2-py1);
+  }
+
+  drawCurve(ctx, fd.f, fd.min, fd.max, toX, toY, '#e8c547');
+  drawCurve(ctx, fd.g, fd.min, fd.max, toX, toY, '#e05c7a', 2, 200);
+
+  // Legend
+  ctx.font = '12px Syne';
+  ctx.fillStyle = '#e8c547'; ctx.fillText('f(x) = ' + fd.label[0], 10, 20);
+  ctx.fillStyle = '#e05c7a'; ctx.fillText('g(x) = ' + fd.label[1], 10, 40);
+  ctx.font = '11px Syne';
+  ctx.fillStyle = 'rgba(91,200,175,0.7)'; ctx.fillText('f > g', 10, 60);
+  ctx.fillStyle = 'rgba(224,92,122,0.7)'; ctx.fillText('g > f', 10, 80);
+
+  document.getElementById('posInfo').innerHTML = `<div class="info-chip">${fd.info}</div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 06 — NEWTON
+// ═══════════════════════════════════════════════════
+const NEWTON_FUNCS = [
+  { f: x => x*x-2, df: x => 2*x, root: Math.sqrt(2), min:-0.5, max:3, yMin:-2.5, yMax:4 },
+  { f: x => x*x*x-x-1, df: x => 3*x*x-1, root: 1.3247179572, min:-1, max:2, yMin:-2, yMax:3 },
+  { f: x => x*x-x-2, df: x => 2*x-1, root: 2, min:-1.5, max:3, yMin:-3, yMax:4 }
+];
+let curNewtonFunc = 0;
+let newtonX0 = 2;
+let newtonSteps = [];
+let newtonStep = 0;
+
+function setNewtonFunc(i) {
+  curNewtonFunc = i;
+  document.querySelectorAll('#newtonFuncBtns .btn').forEach((b, j) => b.classList.toggle('active', j===i));
+  newtonReset();
+}
+
+function newtonComputeSteps(x0, nMax=8) {
+  const fd = NEWTON_FUNCS[curNewtonFunc];
+  const steps = [x0];
+  let x = x0;
+  for (let i = 0; i < nMax; i++) {
+    const fx = fd.f(x), fpx = fd.df(x);
+    if (Math.abs(fpx) < 1e-12) break;
+    x = x - fx/fpx;
+    steps.push(x);
+    if (Math.abs(fx) < 1e-12) break;
+  }
+  return steps;
+}
+
+function newtonReset() {
+  newtonX0 = parseFloat(document.getElementById('slNewtonX0').value);
+  newtonSteps = newtonComputeSteps(newtonX0);
+  newtonStep = 0;
+  drawNewton();
+  updateNewtonTable();
+}
+
+function newtonSetX0() {
+  newtonX0 = parseFloat(document.getElementById('slNewtonX0').value);
+  document.getElementById('newtonX0val').textContent = fmt(newtonX0, 1);
+  newtonReset();
+}
+
+function newtonNext() {
+  if (newtonStep < newtonSteps.length - 1) { newtonStep++; drawNewton(); updateNewtonTable(); }
+}
+
+function newtonPrev() {
+  if (newtonStep > 0) { newtonStep--; drawNewton(); updateNewtonTable(); }
+}
+
+function drawNewton() {
+  const fd = NEWTON_FUNCS[curNewtonFunc];
+  const {ctx, w, h} = getCtx('cvNewton');
+  clearCanvas(ctx, w, h);
+  const {toX, toY} = drawAxes(ctx, w, h, fd.min, fd.max, fd.yMin, fd.yMax);
+
+  drawCurve(ctx, fd.f, fd.min, fd.max, toX, toY, '#e8c547');
+
+  // Draw Newton steps up to current
+  for (let i = 0; i < newtonStep && i < newtonSteps.length-1; i++) {
+    const x = newtonSteps[i];
+    const y = fd.f(x);
+    const slope = fd.df(x);
+    const tang = xx => y + slope*(xx-x);
+
+    // Vertical drop
+    ctx.strokeStyle = '#4a4d5a';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(toX(x), toY(0)); ctx.lineTo(toX(x), toY(y)); ctx.stroke();
+
+    // Tangent
+    const alpha = `${Math.round(180*i/newtonSteps.length + 50)}`;
+    ctx.strokeStyle = `rgba(91,200,175,0.7)`;
+    ctx.setLineDash([]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const x1 = fd.min, x2 = fd.max;
+    ctx.moveTo(toX(x1), toY(tang(x1)));
+    ctx.lineTo(toX(x2), toY(tang(x2)));
+    ctx.stroke();
+
+    ctx.fillStyle = '#5bc8af';
+    ctx.beginPath(); ctx.arc(toX(x), toY(y), 4, 0, 2*Math.PI); ctx.fill();
+  }
+  ctx.setLineDash([]);
+
+  // Current x on axis
+  if (newtonStep < newtonSteps.length) {
+    const xCur = newtonSteps[newtonStep];
+    ctx.fillStyle = '#e8c547';
+    ctx.beginPath(); ctx.arc(toX(xCur), toY(0), 5, 0, 2*Math.PI); ctx.fill();
+    if (Math.abs(fd.f(xCur)) > 0.001) {
+      ctx.fillStyle = '#e8c547';
+      ctx.beginPath(); ctx.arc(toX(xCur), toY(fd.f(xCur)), 5, 0, 2*Math.PI); ctx.fill();
+    }
+  }
+
+  // Root
+  ctx.strokeStyle = 'rgba(224,92,122,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(toX(fd.root), 0); ctx.lineTo(toX(fd.root), h); ctx.stroke();
+  ctx.setLineDash([]);
+
+  document.getElementById('newtonStepInfo').textContent =
+    `Étape ${newtonStep} / x${newtonStep} = ${fmt(newtonSteps[Math.min(newtonStep,newtonSteps.length-1)],6)}`;
+}
+
+function updateNewtonTable() {
+  const fd = NEWTON_FUNCS[curNewtonFunc];
+  let html = '';
+  for (let i = 0; i <= Math.min(newtonStep, newtonSteps.length-1); i++) {
+    const x = newtonSteps[i];
+    const err = Math.abs(x - fd.root);
+    html += `<tr${i===newtonStep?` style="background:rgba(232,197,71,0.08);"`:''}>
+      <td>${i}</td>
+      <td>${fmt(x,8)}</td>
+      <td>${fmt(fd.f(x),4)}</td>
+      <td>${err < 1e-12 ? '<1e-12' : fmt(err,2)}</td>
+    </tr>`;
+  }
+  document.getElementById('newtonTbody').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════
+// SECTION 07 — QCM
+// ═══════════════════════════════════════════════════
+let score = 0, total = 0;
+let timerSec = 0, timerInterval = null, timerVisible = true, timerPaused = false;
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerSec = 0;
+  timerPaused = false;
+  timerInterval = setInterval(() => {
+    if (!timerPaused) { timerSec++; updateTimerDisplay(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const d = document.getElementById('timerDisplay');
+  const m = Math.floor(timerSec/60).toString().padStart(2,'0');
+  const s = (timerSec%60).toString().padStart(2,'0');
+  d.textContent = `${m}:${s}`;
+  d.className = 'timer-display' + (timerSec > 120 ? ' warning' : '');
+}
+
+function toggleTimer() {
+  timerVisible = !timerVisible;
+  const d = document.getElementById('timerDisplay');
+  const btn = document.getElementById('btnToggleTimer');
+  d.style.display = timerVisible ? '' : 'none';
+  btn.textContent = timerVisible ? '⏱ Masquer' : '⏱ Afficher';
+}
+
+function pauseTimer() {
+  timerPaused = !timerPaused;
+  document.getElementById('btnPauseTimer').textContent = timerPaused ? '▶ Reprendre' : '⏸ Pause';
+}
+
+function resetTimer() {
+  timerSec = 0;
+  timerPaused = false;
+  document.getElementById('btnPauseTimer').textContent = '⏸ Pause';
+  updateTimerDisplay();
+}
+
+function rnd(a, b) { return Math.round(a + Math.random()*(b-a)); }
+function rndF(a, b, d=1) { return parseFloat((a + Math.random()*(b-a)).toFixed(d)); }
+function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+function generateQCM() {
+  score = 0; total = 0;
+  document.getElementById('scoreDisplay').textContent = '0 / 0';
+  startTimer();
+  const container = document.getElementById('qcmContainer');
+  const questions = [];
+
+  for (let i = 0; i < 6; i++) questions.push(genQuestion());
+  container.innerHTML = questions.map((q,i) => renderQ(q, i)).join('');
+  if (window.MathJax) MathJax.typesetPromise([container]).catch(()=>{});
+}
+
+function genQuestion() {
+  const type = rnd(0, 8);
+
+  if (type === 0) {
+    // Signe de f' → variation
+    const sign = pick(['+', '-', '0']);
+    let correct, wrong1, wrong2, wrong3;
+    if (sign==='+') { correct='croissante'; wrong1='décroissante'; wrong2='constante'; wrong3='nulle'; }
+    else if (sign==='-') { correct='décroissante'; wrong1='croissante'; wrong2='constante'; wrong3='affine'; }
+    else { correct='constante'; wrong1='croissante'; wrong2='décroissante'; wrong3='nulle'; }
+    return {
+      q: `Si \\(f'(x) ${sign==='+'?'> 0':sign==='-'?'< 0':'= 0'}\\) pour tout \\(x\\) sur \\(I\\), alors \\(f\\) est :`,
+      opts: shuffle([correct, wrong1, wrong2, wrong3]),
+      correct
+    };
+  }
+
+  if (type === 1) {
+    // Extremum d'un polynôme degree 2
+    const a = pick([-3,-2,-1,1,2,3]);
+    const b = rnd(-4, 4);
+    const xs = -b/(2*a);
+    const xs2 = fmt(xs, 2);
+    const correct = `\\(x = ${xs2}\\)`;
+    const w1 = `\\(x = ${fmt(xs+1,2)}\\)`;
+    const w2 = `\\(x = ${fmt(-xs,2)}\\)`;
+    const w3 = `\\(x = ${fmt(xs*2,2)}\\)`;
+    return {
+      q: `La fonction \\(f(x) = ${a}x^2 ${b>=0?'+':''}${b}x\\) admet son extremum en :`,
+      opts: shuffle([correct, w1, w2, w3]),
+      correct
+    };
+  }
+
+  if (type === 2) {
+    // Nature extremum selon a
+    const a = pick([-3,-2,-1,1,2,3]);
+    const typeEx = a>0 ? 'minimum' : 'maximum';
+    const wrong = a>0 ? 'maximum' : 'minimum';
+    return {
+      q: `Pour \\(f(x) = ${a}x^2 + bx + c\\) (quel que soit \\(b\\) et \\(c\\)), l'extremum est un :`,
+      opts: shuffle([typeEx, wrong, 'point d\'inflexion', 'zero']),
+      correct: typeEx
+    };
+  }
+
+  if (type === 3) {
+    // Valeur dérivée en extremum
+    return {
+      q: `Si \\(f\\) admet un extremum local en \\(x_0\\) et est dérivable en \\(x_0\\), alors \\(f'(x_0)\\) vaut :`,
+      opts: shuffle(['\\(0\\)', '\\(1\\)', '\\(-1\\)', 'indéterminé']),
+      correct: '\\(0\\)'
+    };
+  }
+
+  if (type === 4) {
+    // Newton — formule
+    return {
+      q: `La formule d'itération de la méthode de Newton est :`,
+      opts: shuffle([
+        '\\(x_{n+1} = x_n - \\frac{f(x_n)}{f\'(x_n)}\\)',
+        '\\(x_{n+1} = x_n + \\frac{f(x_n)}{f\'(x_n)}\\)',
+        '\\(x_{n+1} = x_n - f(x_n)\\cdot f\'(x_n)\\)',
+        '\\(x_{n+1} = \\frac{x_n + f(x_n)}{f\'(x_n)}\\)'
+      ]),
+      correct: '\\(x_{n+1} = x_n - \\frac{f(x_n)}{f\'(x_n)}\\)'
+    };
+  }
+
+  if (type === 5) {
+    // f' change de signe + à - → ?
+    return {
+      q: `Si \\(f'\\) passe de \\(+\\) à \\(-\\) en \\(x_0\\), alors \\(f\\) admet en \\(x_0\\) :`,
+      opts: shuffle(['un maximum local', 'un minimum local', 'un point d\'inflexion', 'une asymptote']),
+      correct: 'un maximum local'
+    };
+  }
+
+  if (type === 6) {
+    // h = f - g et position relative
+    return {
+      q: `Pour étudier la position relative de \\(\\mathcal{C}_f\\) et \\(\\mathcal{C}_g\\), on étudie le signe de :`,
+      opts: shuffle(['\\(h(x) = f(x) - g(x)\\)', '\\(h(x) = f(x) + g(x)\\)', '\\(h(x) = f\'(x) - g\'(x)\\)', '\\(h(x) = f(x)\\cdot g(x)\\)']),
+      correct: '\\(h(x) = f(x) - g(x)\\)'
+    };
+  }
+
+  if (type === 7) {
+    // Tangente horizontale
+    const a = pick([-2,-1,1,2]);
+    const b = rnd(-4, 4)*2;
+    const xs = fmt(-b/(2*a), 2);
+    const fs = a*(-b/(2*a))**2 + b*(-b/(2*a));
+    const correct = `\\(y = ${fmt(fs,2)}\\)`;
+    return {
+      q: `L'équation de la tangente à \\(f(x)=${a}x^2${b>=0?'+':''}${b}x\\) en son extremum est :`,
+      opts: shuffle([correct, '\\(y = 0\\)', `\\(y = ${fmt(fs+1,2)}\\)`, `\\(y = ${fmt(xs)}\\)`]),
+      correct
+    };
+  }
+
+  // Fallback
+  return {
+    q: `Quelle est la dérivée de \\(f(x) = x^2\\) ?`,
+    opts: ['\\(2x\\)', '\\(x\\)', '\\(x^2\\)', '\\(2\\)'],
+    correct: '\\(2x\\)'
+  };
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderQ(q, idx) {
+  const opts = q.opts.map((o, oi) =>
+    `<button class="option" onclick="checkAnswer(${idx}, ${oi})">${o}</button>`
+  ).join('');
+  return `<div class="qcm-question" id="qBlock${idx}">
+    <div class="question-text">${idx+1}. ${q.q}</div>
+    <div class="options" id="opts${idx}">${opts}</div>
+    <div class="feedback" id="fb${idx}"></div>
+  </div>`;
+}
+
+let globalQData = [];
+
+window.generateQCM = function() {
+  globalQData = [];
+  score = 0; total = 0;
+  document.getElementById('scoreDisplay').textContent = '0 / 0';
+  startTimer();
+  const container = document.getElementById('qcmContainer');
+  for (let i = 0; i < 6; i++) globalQData.push(genQuestion());
+  container.innerHTML = globalQData.map((q,i) => renderQ(q, i)).join('');
+  if (window.MathJax) MathJax.typesetPromise([container]).catch(()=>{});
+};
+
+function generateQCM() { window.generateQCM(); }
+
+window.checkAnswer = function(qIdx, optIdx) {
+  const q = globalQData[qIdx];
+  if (!q) return;
+  const opts = document.querySelectorAll(`#opts${qIdx} .option`);
+  // Compare by index: find which index holds the correct answer
+  const correctIdx = q.opts.indexOf(q.correct);
+  const isCorrect = (optIdx === correctIdx);
+
+  opts.forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === correctIdx) o.classList.add('correct');
+  });
+  if (!isCorrect) opts[optIdx].classList.add('wrong');
+
+  total++;
+  if (isCorrect) score++;
+  document.getElementById('scoreDisplay').textContent = `${score} / ${total}`;
+
+  const fb = document.getElementById(`fb${qIdx}`);
+  fb.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+  fb.textContent = isCorrect ? '✓ Correct !' : `✗ Incorrect.`;
+  if (window.MathJax) MathJax.typesetPromise([fb]).catch(()=>{});
+};
+
+// ═══════════════════════════════════════════════════
+// PYODIDE — Python editor
+// ═══════════════════════════════════════════════════
+let pyodide = null;
+let pyodideReady = false;
+
+async function initPyodide() {
+  try {
+    pyodide = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
+    });
+    pyodideReady = true;
+
+    // Enable run button
+    const btn = document.getElementById('pyRunBtn');
+    if (btn) { btn.disabled = false; }
+
+    // Hide loader
+    const loader = document.getElementById('pyLoader');
+    if (loader) loader.style.display = 'none';
+
+    setStatus('done', 'Python prêt ✓');
+  } catch(e) {
+    setStatus('err', 'Erreur de chargement Pyodide');
+    const loader = document.getElementById('pyLoader');
+    if (loader) loader.innerHTML = '<span style="color:var(--accent3)">⚠ Impossible de charger Pyodide (connexion requise)</span>';
+  }
+}
+
+function setStatus(state, text) {
+  const dot = document.getElementById('pyStatusDot');
+  const txt = document.getElementById('pyStatusText');
+  if (!dot || !txt) return;
+  dot.className = 'py-status-dot' + (state ? ` ${state}` : '');
+  txt.textContent = text;
+}
+
+async function runPython() {
+  if (!pyodideReady) return;
+  const code = document.getElementById('pyCode').value;
+  const output = document.getElementById('pyOutput');
+  const btn = document.getElementById('pyRunBtn');
+
+  output.className = 'py-output visible';
+  output.textContent = '';
+  btn.disabled = true;
+  btn.textContent = '⏳ Exécution…';
+  setStatus('running', 'Exécution en cours…');
+
+  // Capture stdout
+  let captured = '';
+  pyodide.setStdout({ batched: s => { captured += s + '\n'; } });
+  pyodide.setStderr({ batched: s => { captured += '⚠ ' + s + '\n'; } });
+
+  try {
+    await pyodide.runPythonAsync(code);
+    output.className = 'py-output visible success';
+    output.textContent = captured.trim() || '(aucune sortie)';
+    setStatus('done', `Exécution terminée`);
+  } catch(err) {
+    output.className = 'py-output visible error';
+    output.textContent = err.message || String(err);
+    setStatus('err', 'Erreur d\'exécution');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '▶ Exécuter';
+}
+
+function downloadPython() {
+  const code = document.getElementById('pyCode').value;
+  const blob = new Blob([code], { type: 'text/x-python' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'newton.py';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function handleTab(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '    ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 4;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runPython();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  drawFuncSection();
+  updateExt();
+  updatePoly();
+  updateOpt();
+  drawPos();
+  newtonReset();
+  generateQCM();
+  initPyodide();
+
+  // Nav active state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => obs.observe(s));
+});
+</script>
+</body>
+</html>
